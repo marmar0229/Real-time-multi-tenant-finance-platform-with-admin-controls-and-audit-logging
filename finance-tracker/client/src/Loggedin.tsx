@@ -41,8 +41,8 @@ export  function Loggedin() {
 // if their isadmin is true then we can make them able to instantly add or delete
 // if not then it pops up with needs approval or sum 
   const { user, expense,isAdmin} = useLoaderData() as LoaderData
-  const [inputTake, changeInputTake] = useState<String>('')
-  const [description, changeDescription] = useState<String>('')
+  const [inputTake, changeInputTake] = useState<string>('')
+  const [description, changeDescription] = useState<string>('')
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
   const revalidator = useRevalidator()
