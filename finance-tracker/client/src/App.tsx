@@ -19,7 +19,7 @@ export function App() {
     if (!action) return
 
     try {
-      const response = await fetch(`http://localhost:3000${action}`, {
+      const response = await fetch(`https://real-time-multi-tenant-finance-platform.onrender.com${action}`,  {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -42,7 +42,7 @@ export function App() {
         const token = await response.text()
         sessionStorage.setItem("token", token)
 
-        const checkResponse = await fetch("http://localhost:3000/checktoken", {
+        const checkResponse = await fetch("https://real-time-multi-tenant-finance-platform.onrender.com/checktoken", {
           headers: {
             Authorization: `Bearer ${token}`
           }

@@ -1,4 +1,5 @@
-require('dotenv').config()
+require('dotenv').config({ path: 'finance-tracker/client/.env' })
+
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')

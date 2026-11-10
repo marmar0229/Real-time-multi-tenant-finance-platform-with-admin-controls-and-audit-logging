@@ -24,7 +24,7 @@ export const router = createBrowserRouter([
         return redirect("/")
       }
 
-      const response = await fetch('http://localhost:3000/receiveuserforpage', {
+      const response = await fetch('https://real-time-multi-tenant-finance-platform.onrender.com/receiveuserforpage', {
         headers: {
           Authorization: `Bearer ${token}`
         }

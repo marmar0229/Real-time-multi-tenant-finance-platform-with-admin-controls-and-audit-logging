@@ -1,3 +1,5 @@
+
+
 import { useState, useEffect } from "react"
 import { useLoaderData, useRevalidator } from "react-router-dom"
 import { io } from "socket.io-client";
@@ -38,8 +40,6 @@ interface LogEntry {
 // find  somewhere where expense list is 
 //  already reaceiving user  user of person to check if it has admin
 export  function Loggedin() {
-// if their isadmin is true then we can make them able to instantly add or delete
-// if not then it pops up with needs approval or sum 
   const { user, expense,isAdmin} = useLoaderData() as LoaderData
   const [inputTake, changeInputTake] = useState<string>('')
   const [description, changeDescription] = useState<string>('')
@@ -47,36 +47,31 @@ export  function Loggedin() {
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
   const revalidator = useRevalidator()
   const [view, setView] = useState<'expenses' | 'log'>('expenses')
-  
 
   async function loadList() {
     const token = sessionStorage.getItem('token')
-    const response = await fetch('http://localhost:3000/transactions', {
+    const response = await fetch('https://real-time-multi-tenant-finance-platform.onrender.com/transactions', {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (response.ok) setTransactions(await response.json())
-
   }
   async function loadLog() {
     const token = sessionStorage.getItem('token')
-    const response = await fetch('http://localhost:3000/auditlog', {
+    const response = await fetch('https://real-time-multi-tenant-finance-platform.onrender.com/auditlog', {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (response.ok) setLogEntries(await response.json())
   }
 
-  // load the list once when the page opens
   useEffect(() => {
-    const socket = io('http://localhost:3000', {
+    const socket = io('https://real-time-multi-tenant-finance-platform.onrender.com', {
       auth: { token: sessionStorage.getItem('token') }
     })
 
-    // everyone: when the company's expenses change, refetch the list
     socket.on('expenseschanged', () => {
       loadList()
     })
 
-    // admins only: add each new log line to the audit log
     if (isAdmin) {
       socket.on('auditlog', (entry: LogEntry) => {
         setLogEntries(prev => [entry, ...prev])
@@ -88,20 +83,13 @@ export  function Loggedin() {
     }
   }, [isAdmin])
 
-
-
-
-
-
-  //
-  
- useEffect(()=>{
-  loadList()
- },[])
+  useEffect(()=>{
+    loadList()
+  },[])
 
   async function setStatus(id: string, status: 'approved' | 'rejected') {
     const token = sessionStorage.getItem('token')
-    const response = await fetch(`http://localhost:3000/transactions/${id}/status`, {
+    const response = await fetch(`https://real-time-multi-tenant-finance-platform.onrender.com/transactions/${id}/status`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -116,7 +104,7 @@ export  function Loggedin() {
       alert(err.wow || "Could not update expense.")
     }
   }
- 
+
   return (
     <div>
       <p>{`hello ${user} Buisness`}</p>
@@ -132,7 +120,7 @@ export  function Loggedin() {
       <button onClick={async () => {
         const token = sessionStorage.getItem('token')
 
-        const response = await fetch('http://localhost:3000/updateexpense', {
+        const response = await fetch('https://real-time-multi-tenant-finance-platform.onrender.com/updateexpense', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -160,11 +148,10 @@ export  function Loggedin() {
         placeholder="What was it for?"
       />
 
-      {/* uses the same amount box above */}
       <button onClick={async () => {
         const token = sessionStorage.getItem('token')
 
-        const response = await fetch('http://localhost:3000/transactions', {
+        const response = await fetch('https://real-time-multi-tenant-finance-platform.onrender.com/transactions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -181,7 +168,6 @@ export  function Loggedin() {
           const err = await response.json()
           alert(err.wow || "Failed to add expense.")
         }
-        
       }}>
         Add To List
       </button>
@@ -210,12 +196,12 @@ export  function Loggedin() {
         </ul>
       ) : (
         <ul>
-        {logEntries.map(e => (
-          <li key={e._id}>
-            {`${new Date(e.date).toLocaleString()} - ${e.user} ${e.action}: ${e.detail}`}
-          </li>
-        ))}
-      </ul>
+          {logEntries.map(e => (
+            <li key={e._id}>
+              {`${new Date(e.date).toLocaleString()} - ${e.user} ${e.action}: ${e.detail}`}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   )
